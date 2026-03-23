@@ -98,3 +98,31 @@
 - Tests: `7 passed`
 - Real benchmark file: `reports/benchmark-real-2026-03-23.json`
 - Real matrix file: `reports/benchmark-matrix-real-2026-03-23.json`
+
+## 2026-03-23 — Reward stack + replay evaluator shipped
+
+### Implemented
+- Added `aerorl/rewards.py` with composable reward framework:
+	- `VerifierReward`
+	- `GroundingReward`
+	- `FormatReward`
+	- `CostReward`
+	- `WeightedRewardStack`
+	- `build_default_reward_stack`
+	- `evaluate_records`
+- Added offline evaluator CLI:
+	- `benchmarks/reward_replay_evaluator.py`
+- Exported reward APIs in `aerorl/__init__.py`.
+
+### Tests and artifacts
+- Added tests:
+	- `tests/test_rewards.py`
+	- `tests/test_reward_replay_evaluator_cli.py`
+- Full suite result: `12 passed`.
+- Added replay sample + summary artifacts:
+	- `reports/reward-replay-sample-2026-03-23.jsonl`
+	- `reports/reward-eval-summary-2026-03-23.json`
+
+### Why this matters
+- AeroRL now supports fast reward-iteration loops offline before expensive RL runs.
+- This directly improves practical usefulness for reward-function experimentation.

@@ -1,0 +1,66 @@
+{
+  "count": 2,
+  "average_reward": 0.359,
+  "results": [
+    {
+      "id": "ex1",
+      "reward": {
+        "total_reward": 1.0,
+        "components": {
+          "verifier": 1.0,
+          "grounding": 1.0,
+          "format": 1.0,
+          "cost": 1.0
+        },
+        "details": {
+          "verifier": {
+            "exact_match": true,
+            "contains_reference": true
+          },
+          "grounding": {
+            "claimed": 1,
+            "overlap": 1,
+            "precision": 1.0
+          },
+          "format": {},
+          "cost": {
+            "token_count": 1,
+            "latency_ms": 45.0,
+            "target_tokens": 128,
+            "latency_budget_ms": 500.0
+          }
+        }
+      }
+    },
+    {
+      "id": "ex2",
+      "reward": {
+        "total_reward": -0.282,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 0.17999999999999994
+        },
+        "details": {
+          "verifier": {
+            "exact_match": false,
+            "contains_reference": false
+          },
+          "grounding": {
+            "claimed": 1,
+            "overlap": 0,
+            "precision": 0.0
+          },
+          "format": {},
+          "cost": {
+            "token_count": 3,
+            "latency_ms": 910.0,
+            "target_tokens": 128,
+            "latency_budget_ms": 500.0
+          }
+        }
+      }
+    }
+  ]
+}

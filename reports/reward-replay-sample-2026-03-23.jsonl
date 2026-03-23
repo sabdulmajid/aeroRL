@@ -1,0 +1,2 @@
+{"id":"ex1","prompt":"What text is visible on the sign?","response":"stop","reference":"stop","metadata":{"evidence_entities":["stop"],"claimed_entities":["stop"],"latency_ms":45}}
+{"id":"ex2","prompt":"Return JSON with key answer","response":"not valid json","reference":"{\"answer\":\"cat\"}","metadata":{"evidence_entities":["cat"],"claimed_entities":["dog"],"latency_ms":910}}

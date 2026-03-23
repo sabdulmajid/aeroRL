@@ -9,6 +9,7 @@ Give AeroRL your model setup and training tensors, and it gives you:
 - masked loss for vision-language tokens
 - training step lifecycle hooks
 - benchmark reports (throughput + VRAM)
+- composable reward stack + offline replay reward evaluation
 
 ## What problem it solves
 
@@ -17,6 +18,7 @@ When building RL for VLMs, teams repeatedly rebuild the same plumbing:
 2. wire train/reference model roles
 3. apply vision-token masking correctly in loss
 4. measure speed and memory in a repeatable way
+5. iterate reward design quickly before expensive RL runs
 
 AeroRL standardizes that plumbing so you can focus on the experiment itself.
 
@@ -26,6 +28,7 @@ AeroRL standardizes that plumbing so you can focus on the experiment itself.
 2. `AeroRLTrainer` runs `on_train_start()` → `train_step(...)` → `on_train_end()`.
 3. `train_step(...)` uses masked cross-entropy (vision tokens excluded from text loss).
 4. `vlm_grpo_benchmark.py` outputs JSON reports with `iters_per_sec` and `peak_vram_gb`.
+5. `reward_replay_evaluator.py` scores offline trajectories with weighted reward components.
 
 ## 2-minute example (end-to-end)
 
@@ -58,6 +61,12 @@ print("Train end:", trainer.on_train_end())
 python benchmarks/vlm_grpo_benchmark.py --mode real --model Qwen/Qwen2.5-VL-7B-Instruct --steps 20 --matrix-size 512
 ```
 
+## Reward replay evaluator command
+
+```bash
+python benchmarks/reward_replay_evaluator.py --input reports/reward-replay-sample-2026-03-23.jsonl --output reports/reward-eval-summary-2026-03-23.json
+```
+
 ## Measured results (current repo artifacts)
 
 From `reports/benchmark-real-2026-03-23.json`:
@@ -70,7 +79,10 @@ From `reports/benchmark-matrix-real-2026-03-23.json`:
 - max peak VRAM: `0.0314 GB`
 
 Validation status:
-- test suite: `7 passed`
+- test suite: `12 passed`
+
+Reward evaluator artifact:
+- `reports/reward-eval-summary-2026-03-23.json` (`average_reward`: `0.359` on sample replay set)
 
 ## Install
 
@@ -93,3 +105,5 @@ python -m pip install -e .
 - `AeroRLTrainer`
 - `masked_cross_entropy_loss(...)`
 - `create_quantized_reference_runtime(...)`
+- `build_default_reward_stack(...)`
+- `evaluate_records(...)`
