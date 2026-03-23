@@ -1,0 +1,14 @@
+{
+  "model": "Qwen/Qwen2.5-VL-7B-Instruct",
+  "steps": 25,
+  "elapsed_sec": 0.2515,
+  "iters_per_sec": 99.3925,
+  "config": {
+    "zero_copy_kv": true,
+    "mask_vision_tokens": true,
+    "quant_ref_bits": 8
+  },
+  "model_runtime": "trainable",
+  "ref_runtime": "reference",
+  "note": "Synthetic smoke benchmark; replace with real VLM GRPO benchmark measurements."
+}

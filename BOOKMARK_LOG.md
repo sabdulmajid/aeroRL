@@ -37,3 +37,30 @@
 - `python -m pip install -e .` failed with `OSError: [Errno 28] No space left on device`.
 - `pytest` executable is not installed on host PATH.
 - Functional smoke checks passed using `PYTHONPATH=. python ...` invocations.
+
+## 2026-03-23 — Verification + disk-space fix
+
+### What was done
+- Diagnosed free space across mounted disks and confirmed `/pub7` has large free capacity.
+- Created dedicated execution environment on `/pub7`:
+	- venv: `/pub7/neel2/.venvs/aerorl`
+	- temp: `/pub7/neel2/tmp`
+	- pip cache: `/pub7/neel2/pip-cache`
+- Successfully installed project with:
+	- `TMPDIR=/pub7/neel2/tmp PIP_CACHE_DIR=/pub7/neel2/pip-cache /pub7/neel2/.venvs/aerorl/bin/python -m pip install -e .`
+- Ran tests:
+	- `/pub7/neel2/.venvs/aerorl/bin/python -m pytest -q`
+	- Result: `1 passed in 0.01s`
+- Ran benchmark and persisted output:
+	- `/pub7/neel2/.venvs/aerorl/bin/python benchmarks/vlm_grpo_benchmark.py --model Qwen/Qwen2.5-VL-7B-Instruct --steps 25`
+	- Output saved to `reports/benchmark-smoke-2026-03-23.json`
+- Added verification report:
+	- `reports/verification-2026-03-23.md`
+
+### Latest benchmark values
+- `steps`: 25
+- `elapsed_sec`: 0.2515
+- `iters_per_sec`: 99.3925
+
+### Resume note
+- Use `/pub7/neel2/.venvs/aerorl/bin/python` for all project commands to avoid `/pub3` disk-space issues.
