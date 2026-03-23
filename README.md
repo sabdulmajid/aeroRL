@@ -1,28 +1,76 @@
 # AeroRL
 
-Production-oriented library for VLM-RL training runtime orchestration and performance benchmarking.
+AeroRL is a small library that helps you run VLM-RL experiments with less boilerplate and with measurable performance output.
 
-## What AeroRL delivers
+## In one sentence
 
-- Unified runtime wiring for train/reference model roles
-- Vision-token-aware loss path for multimodal RL batches
-- Backend routing for `trl` / `verl` environments
-- Quantized reference runtime selection
-- Reproducible throughput and VRAM benchmark reports
+Give AeroRL your model setup and training tensors, and it gives you:
+- runtime wiring (train + reference)
+- masked loss for vision-language tokens
+- training step lifecycle hooks
+- benchmark reports (throughput + VRAM)
 
-## Why choose this
+## What problem it solves
 
-- Faster path from idea to measurable VLM-RL experiments
-- Consistent API across experimentation and evaluation workflows
-- Versioned benchmark artifacts for transparent performance tracking
-- Test-covered core runtime behaviors
+When building RL for VLMs, teams repeatedly rebuild the same plumbing:
+1. choose trainer backend (`trl` / `verl`)
+2. wire train/reference model roles
+3. apply vision-token masking correctly in loss
+4. measure speed and memory in a repeatable way
 
-## Core API
+AeroRL standardizes that plumbing so you can focus on the experiment itself.
 
-- `wrap_vlm_for_rl(...)` — runtime assembly for train/reference roles
-- `AeroRLTrainer` — training lifecycle hooks and masked train step
-- `masked_cross_entropy_loss(...)` — vision-token-aware loss computation
-- `create_quantized_reference_runtime(...)` — quantized reference runtime metadata
+## How it works (easy flow)
+
+1. `wrap_vlm_for_rl(...)` prepares runtime metadata.
+2. `AeroRLTrainer` runs `on_train_start()` → `train_step(...)` → `on_train_end()`.
+3. `train_step(...)` uses masked cross-entropy (vision tokens excluded from text loss).
+4. `vlm_grpo_benchmark.py` outputs JSON reports with `iters_per_sec` and `peak_vram_gb`.
+
+## 2-minute example (end-to-end)
+
+```python
+import torch
+from aerorl import AeroRLConfig, AeroRLTrainer, wrap_vlm_for_rl
+
+# 1) Build runtime config
+cfg = AeroRLConfig(trainer_backend="auto", quant_ref_bits=8, mask_vision_tokens=True)
+train_runtime, ref_runtime = wrap_vlm_for_rl("Qwen/Qwen2.5-VL-7B-Instruct", cfg)
+print("Trainer backend:", train_runtime["trainer"])
+print("Reference mode:", ref_runtime["quantization_mode"])
+
+# 2) One training step
+trainer = AeroRLTrainer(cfg)
+trainer.on_train_start()
+
+logits = torch.randn(2, 4, 8, requires_grad=True)
+labels = torch.tensor([[1, 2, 3, 4], [2, 3, 4, 5]])
+vision_mask = torch.tensor([[True, False, False, True], [False, False, True, False]])
+
+step_result = trainer.train_step(logits=logits, labels=labels, vision_mask=vision_mask)
+print("Step result:", step_result)
+print("Train end:", trainer.on_train_end())
+```
+
+## Benchmark command
+
+```bash
+python benchmarks/vlm_grpo_benchmark.py --mode real --model Qwen/Qwen2.5-VL-7B-Instruct --steps 20 --matrix-size 512
+```
+
+## Measured results (current repo artifacts)
+
+From `reports/benchmark-real-2026-03-23.json`:
+- device: `cuda`
+- throughput: `146.5458 it/s`
+- peak VRAM: `0.0094 GB`
+
+From `reports/benchmark-matrix-real-2026-03-23.json`:
+- models benchmarked: `3`
+- max peak VRAM: `0.0314 GB`
+
+Validation status:
+- test suite: `7 passed`
 
 ## Install
 
@@ -32,65 +80,16 @@ cd aeroRL
 python -m pip install -e .
 ```
 
-## Quick Start
+## Typical use cases
 
-```bash
-python -m pytest -q
-python benchmarks/vlm_grpo_benchmark.py --mode real --model Qwen/Qwen2.5-VL-7B-Instruct --steps 20 --matrix-size 512
-```
+- You are prototyping a new VLM-RL reward/loss idea and need clean trainer scaffolding.
+- You need consistent benchmark JSONs for experiment tracking.
+- You want a compact baseline before integrating a larger training stack.
 
-## Performance Snapshot
+## Public API at a glance
 
-Latest benchmark artifacts:
-- `reports/benchmark-real-2026-03-23.json`
-- `reports/benchmark-matrix-real-2026-03-23.json`
-
-| Benchmark | Mode | Steps | Key Result |
-|---|---|---:|---|
-| Single model (`Qwen/Qwen2.5-VL-7B-Instruct`) | Real | 20 | 146.5458 it/s, 0.0094 GB peak VRAM |
-| Multi-model matrix (3 models) | Real | 40 | 0.0314 GB max peak VRAM |
-
-Validation:
-- `7 passed` tests
-
-## Easy examples
-
-### 1) Runtime wiring
-
-```python
-from aerorl import AeroRLConfig, wrap_vlm_for_rl
-
-cfg = AeroRLConfig(quant_ref_bits=8, trainer_backend="auto")
-train_rt, ref_rt = wrap_vlm_for_rl("Qwen/Qwen2.5-VL-7B-Instruct", cfg)
-print(train_rt["trainer"])
-print(ref_rt["quantization_mode"])
-```
-
-### 2) One training step with vision masking
-
-```python
-import torch
-from aerorl import AeroRLConfig, AeroRLTrainer
-
-trainer = AeroRLTrainer(AeroRLConfig(mask_vision_tokens=True))
-trainer.on_train_start()
-
-logits = torch.randn(2, 4, 8, requires_grad=True)
-labels = torch.tensor([[1, 2, 3, 4], [2, 3, 4, 5]])
-vision_mask = torch.tensor([[True, False, False, True], [False, False, True, False]])
-
-print(trainer.train_step(logits, labels, vision_mask))
-print(trainer.on_train_end())
-```
-
-### 3) Matrix benchmark
-
-```bash
-python benchmarks/vlm_grpo_benchmark.py \
-  --mode real --steps 40 --matrix-size 2048 \
-  --models Qwen/Qwen2.5-VL-7B-Instruct,llava-hf/llava-1.5-7b-hf,microsoft/Phi-3-vision-128k-instruct
-```
-
-## Deployment note
-
-Use `trainer_backend="trl"` or `trainer_backend="verl"` in `AeroRLConfig` when those packages are present in your environment.
+- `AeroRLConfig`
+- `wrap_vlm_for_rl(...)`
+- `AeroRLTrainer`
+- `masked_cross_entropy_loss(...)`
+- `create_quantized_reference_runtime(...)`
