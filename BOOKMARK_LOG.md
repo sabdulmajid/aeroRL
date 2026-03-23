@@ -126,3 +126,23 @@
 ### Why this matters
 - AeroRL now supports fast reward-iteration loops offline before expensive RL runs.
 - This directly improves practical usefulness for reward-function experimentation.
+
+## 2026-03-23 — Reward evaluator usability pass
+
+### Improvements shipped
+- `benchmarks/reward_replay_evaluator.py` now supports:
+	- configurable weights via repeated `--weight name=value`
+	- JSON/regex format constraints (`--require-json`, `--regex-pattern`)
+	- cost controls (`--target-tokens`, `--latency-budget-ms`)
+	- aggregate pass metrics (`--pass-threshold`)
+	- best/worst surfacing (`--top-k`)
+- `aerorl/rewards.py` now returns richer summaries:
+	- `pass_rate`
+	- `component_averages`
+	- `best_examples` / `worst_examples`
+- Added example replay dataset and output:
+	- `examples/reward_replay_example.jsonl`
+	- `reports/reward-eval-example-2026-03-23.json`
+
+### Validation
+- Full suite: `14 passed`

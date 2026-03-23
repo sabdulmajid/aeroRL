@@ -22,6 +22,15 @@ When building RL for VLMs, teams repeatedly rebuild the same plumbing:
 
 AeroRL standardizes that plumbing so you can focus on the experiment itself.
 
+## Why this over doing it manually
+
+Manual reward scoring usually breaks in three places: inconsistent formulas, no shared artifact format, and no fast way to debug failures.
+
+AeroRL fixes that by giving you:
+- one weighted reward contract (`verifier`, `grounding`, `format`, `cost`)
+- one command to score full replay datasets
+- one JSON output with aggregate metrics + best/worst examples for debugging
+
 ## How it works (easy flow)
 
 1. `wrap_vlm_for_rl(...)` prepares runtime metadata.
@@ -67,6 +76,54 @@ python benchmarks/vlm_grpo_benchmark.py --mode real --model Qwen/Qwen2.5-VL-7B-I
 python benchmarks/reward_replay_evaluator.py --input reports/reward-replay-sample-2026-03-23.jsonl --output reports/reward-eval-summary-2026-03-23.json
 ```
 
+## Drop-in usage (copy/paste)
+
+### 1) Dataset format (`.jsonl`)
+
+Each line should be one record:
+
+```json
+{"id":"ex1","prompt":"...","response":"...","reference":"...","metadata":{"evidence_entities":["..."],"claimed_entities":["..."],"latency_ms":120}}
+```
+
+Use the included working example dataset:
+- `examples/reward_replay_example.jsonl`
+
+### 2) Run evaluator
+
+```bash
+python benchmarks/reward_replay_evaluator.py \
+	--input examples/reward_replay_example.jsonl \
+	--output reports/reward-eval-example-2026-03-23.json \
+	--require-json \
+	--regex-pattern '^\{.*\}$' \
+	--weight verifier=0.45 \
+	--weight grounding=0.3 \
+	--weight format=0.2 \
+	--weight cost=0.05 \
+	--pass-threshold 0.5 \
+	--top-k 2
+```
+
+### 3) Expected output (what you get)
+
+Console summary includes:
+- `count`
+- `average_reward`
+- `pass_rate`
+- `component_averages`
+
+JSON output includes:
+- global metrics (`average_reward`, `pass_rate`, `weights`)
+- `best_examples` and `worst_examples`
+- per-record component scores and details
+
+From the included example run (`reports/reward-eval-example-2026-03-23.json`):
+- `average_reward`: `0.216333`
+- `pass_rate`: `0.333333`
+- best example: `good-ocr` (`total_reward=1.0`)
+- worst example: `bad-grounding` (`total_reward=-0.275`)
+
 ## Measured results (current repo artifacts)
 
 From `reports/benchmark-real-2026-03-23.json`:
@@ -83,6 +140,7 @@ Validation status:
 
 Reward evaluator artifact:
 - `reports/reward-eval-summary-2026-03-23.json` (`average_reward`: `0.359` on sample replay set)
+- `reports/reward-eval-example-2026-03-23.json` (`average_reward`: `0.216333`, with best/worst examples)
 
 ## Install
 

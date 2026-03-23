@@ -10,6 +10,7 @@ from .rewards import (
 	VerifierReward,
 	WeightedRewardStack,
 	build_default_reward_stack,
+	build_reward_stack,
 	evaluate_records,
 )
 from .trainer import AeroRLTrainer
@@ -27,6 +28,7 @@ __all__ = [
 	"WeightedRewardStack",
 	"build_text_token_mask",
 	"build_default_reward_stack",
+	"build_reward_stack",
 	"create_quantized_reference_runtime",
 	"evaluate_records",
 	"masked_cross_entropy_loss",

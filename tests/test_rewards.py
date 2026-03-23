@@ -6,6 +6,7 @@ from aerorl import (
     FormatReward,
     CostReward,
     build_default_reward_stack,
+    build_reward_stack,
     evaluate_records,
 )
 
@@ -62,11 +63,35 @@ def test_evaluate_records_summary() -> None:
         },
     ]
 
-    summary = evaluate_records(records)
+    summary = evaluate_records(records, pass_threshold=0.0, top_k=1)
 
     assert summary["count"] == 2
     assert len(summary["results"]) == 2
     assert isinstance(summary["average_reward"], float)
+    assert "component_averages" in summary
+    assert "pass_rate" in summary
+    assert len(summary["best_examples"]) == 1
+    assert len(summary["worst_examples"]) == 1
+
+
+def test_build_reward_stack_customization() -> None:
+    stack = build_reward_stack(
+        weights={"verifier": 1.0, "grounding": 0.0, "format": 0.0, "cost": 0.0},
+        require_json=True,
+        regex_pattern=r"^\{.*\}$",
+        target_tokens=16,
+        latency_budget_ms=200,
+    )
+
+    assert stack.weights["verifier"] == 1.0
+    context = RewardContext(
+        prompt="p",
+        response='{"answer": "ok"}',
+        reference='{"answer": "ok"}',
+        metadata={"latency_ms": 10, "evidence_entities": ["ok"], "claimed_entities": ["ok"]},
+    )
+    scored = stack.evaluate(context)
+    assert scored["components"]["format"] >= 0.0
 
 
 def test_individual_rewards() -> None:

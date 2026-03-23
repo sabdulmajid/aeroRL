@@ -166,22 +166,43 @@ class WeightedRewardStack:
 
 
 def build_default_reward_stack() -> WeightedRewardStack:
+    return build_reward_stack()
+
+
+def build_reward_stack(
+    *,
+    weights: dict[str, float] | None = None,
+    require_json: bool = False,
+    regex_pattern: str | None = None,
+    target_tokens: int = 128,
+    latency_budget_ms: float = 500.0,
+) -> WeightedRewardStack:
     rewards: list[RewardFunction] = [
         VerifierReward(),
         GroundingReward(),
-        FormatReward(require_json=False),
-        CostReward(target_tokens=128, latency_budget_ms=500.0),
+        FormatReward(require_json=require_json, regex_pattern=regex_pattern),
+        CostReward(target_tokens=target_tokens, latency_budget_ms=latency_budget_ms),
     ]
-    weights = {
+    default_weights = {
         "verifier": 0.4,
         "grounding": 0.3,
         "format": 0.2,
         "cost": 0.1,
     }
-    return WeightedRewardStack(reward_functions=rewards, weights=weights)
+
+    merged_weights = dict(default_weights)
+    if weights:
+        merged_weights.update(weights)
+    return WeightedRewardStack(reward_functions=rewards, weights=merged_weights)
 
 
-def evaluate_records(records: Iterable[dict[str, Any]], reward_stack: WeightedRewardStack | None = None) -> dict[str, Any]:
+def evaluate_records(
+    records: Iterable[dict[str, Any]],
+    reward_stack: WeightedRewardStack | None = None,
+    *,
+    pass_threshold: float = 0.3,
+    top_k: int = 3,
+) -> dict[str, Any]:
     stack = reward_stack or build_default_reward_stack()
     outputs: list[dict[str, Any]] = []
 
@@ -199,12 +220,51 @@ def evaluate_records(records: Iterable[dict[str, Any]], reward_stack: WeightedRe
         return {
             "count": 0,
             "average_reward": 0.0,
+            "pass_rate": 0.0,
+            "component_averages": {},
+            "best_examples": [],
+            "worst_examples": [],
             "results": [],
         }
 
-    avg = sum(item["reward"]["total_reward"] for item in outputs) / len(outputs)
+    total_scores = [item["reward"]["total_reward"] for item in outputs]
+    avg = sum(total_scores) / len(outputs)
+
+    component_names = list(outputs[0]["reward"]["components"].keys())
+    component_averages = {
+        name: round(sum(item["reward"]["components"][name] for item in outputs) / len(outputs), 6)
+        for name in component_names
+    }
+
+    passed = sum(1 for value in total_scores if value >= pass_threshold)
+    pass_rate = passed / len(outputs)
+
+    sorted_outputs = sorted(outputs, key=lambda item: item["reward"]["total_reward"], reverse=True)
+    best_examples = [
+        {
+            "id": item.get("id"),
+            "total_reward": item["reward"]["total_reward"],
+            "components": item["reward"]["components"],
+        }
+        for item in sorted_outputs[:top_k]
+    ]
+    worst_examples = [
+        {
+            "id": item.get("id"),
+            "total_reward": item["reward"]["total_reward"],
+            "components": item["reward"]["components"],
+        }
+        for item in sorted_outputs[-top_k:]
+    ]
+
     return {
         "count": len(outputs),
         "average_reward": round(avg, 6),
+        "pass_rate": round(pass_rate, 6),
+        "pass_threshold": pass_threshold,
+        "component_averages": component_averages,
+        "weights": stack.weights,
+        "best_examples": best_examples,
+        "worst_examples": worst_examples,
         "results": outputs,
     }

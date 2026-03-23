@@ -1,0 +1,163 @@
+{
+  "count": 3,
+  "average_reward": 0.216333,
+  "pass_rate": 0.333333,
+  "pass_threshold": 0.5,
+  "component_averages": {
+    "verifier": 0.0,
+    "grounding": 0.333333,
+    "format": 0.4,
+    "cost": 0.726667
+  },
+  "weights": {
+    "verifier": 0.45,
+    "grounding": 0.3,
+    "format": 0.2,
+    "cost": 0.05
+  },
+  "best_examples": [
+    {
+      "id": "good-ocr",
+      "total_reward": 1.0,
+      "components": {
+        "verifier": 1.0,
+        "grounding": 1.0,
+        "format": 1.0,
+        "cost": 1.0
+      }
+    },
+    {
+      "id": "bad-format",
+      "total_reward": -0.076,
+      "components": {
+        "verifier": -0.5,
+        "grounding": 1.0,
+        "format": -0.8,
+        "cost": 0.17999999999999994
+      }
+    }
+  ],
+  "worst_examples": [
+    {
+      "id": "bad-format",
+      "total_reward": -0.076,
+      "components": {
+        "verifier": -0.5,
+        "grounding": 1.0,
+        "format": -0.8,
+        "cost": 0.17999999999999994
+      }
+    },
+    {
+      "id": "bad-grounding",
+      "total_reward": -0.275,
+      "components": {
+        "verifier": -0.5,
+        "grounding": -1.0,
+        "format": 1.0,
+        "cost": 1.0
+      }
+    }
+  ],
+  "results": [
+    {
+      "id": "good-ocr",
+      "reward": {
+        "total_reward": 1.0,
+        "components": {
+          "verifier": 1.0,
+          "grounding": 1.0,
+          "format": 1.0,
+          "cost": 1.0
+        },
+        "details": {
+          "verifier": {
+            "exact_match": true,
+            "contains_reference": true
+          },
+          "grounding": {
+            "claimed": 1,
+            "overlap": 1,
+            "precision": 1.0
+          },
+          "format": {
+            "json_valid": true,
+            "regex_matched": true
+          },
+          "cost": {
+            "token_count": 1,
+            "latency_ms": 72.0,
+            "target_tokens": 128,
+            "latency_budget_ms": 500.0
+          }
+        }
+      }
+    },
+    {
+      "id": "bad-grounding",
+      "reward": {
+        "total_reward": -0.275,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        },
+        "details": {
+          "verifier": {
+            "exact_match": false,
+            "contains_reference": false
+          },
+          "grounding": {
+            "claimed": 1,
+            "overlap": 0,
+            "precision": 0.0
+          },
+          "format": {
+            "json_valid": true,
+            "regex_matched": true
+          },
+          "cost": {
+            "token_count": 1,
+            "latency_ms": 340.0,
+            "target_tokens": 128,
+            "latency_budget_ms": 500.0
+          }
+        }
+      }
+    },
+    {
+      "id": "bad-format",
+      "reward": {
+        "total_reward": -0.076,
+        "components": {
+          "verifier": -0.5,
+          "grounding": 1.0,
+          "format": -0.8,
+          "cost": 0.17999999999999994
+        },
+        "details": {
+          "verifier": {
+            "exact_match": false,
+            "contains_reference": false
+          },
+          "grounding": {
+            "claimed": 1,
+            "overlap": 1,
+            "precision": 1.0
+          },
+          "format": {
+            "json_valid": false,
+            "regex_matched": false
+          },
+          "cost": {
+            "token_count": 4,
+            "latency_ms": 910.0,
+            "target_tokens": 128,
+            "latency_budget_ms": 500.0
+          }
+        }
+      }
+    }
+  ]
+}

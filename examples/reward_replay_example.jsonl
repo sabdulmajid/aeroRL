@@ -1,0 +1,3 @@
+{"id":"good-ocr","prompt":"What text appears on the sign? Return JSON {\"answer\":...}","response":"{\"answer\":\"stop\"}","reference":"{\"answer\":\"stop\"}","metadata":{"evidence_entities":["stop"],"claimed_entities":["stop"],"latency_ms":72}}
+{"id":"bad-grounding","prompt":"What brand logo is visible? Return JSON {\"answer\":...}","response":"{\"answer\":\"nike\"}","reference":"{\"answer\":\"adidas\"}","metadata":{"evidence_entities":["adidas"],"claimed_entities":["nike"],"latency_ms":340}}
+{"id":"bad-format","prompt":"Return JSON {\"answer\":...}","response":"The answer is cat","reference":"{\"answer\":\"cat\"}","metadata":{"evidence_entities":["cat"],"claimed_entities":["cat"],"latency_ms":910}}
