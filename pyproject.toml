@@ -12,6 +12,7 @@ authors = [
   { name = "AeroRL Contributors" }
 ]
 dependencies = [
+  "numpy>=1.26",
   "torch>=2.2",
 ]
 
