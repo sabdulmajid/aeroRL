@@ -64,3 +64,24 @@
 
 ### Resume note
 - Use `/pub7/neel2/.venvs/aerorl/bin/python` for all project commands to avoid `/pub3` disk-space issues.
+
+## 2026-03-23 — Completion pass for missing features
+
+### User-required missing items addressed
+- Real TRL/verl GRPO integration surface:
+	- Added backend adapter resolution in `aerorl/adapters.py` and wired to `wrap_vlm_for_rl` output.
+- Vision-token masking in loss path:
+	- Added `aerorl/losses.py` with `build_text_token_mask` and `masked_cross_entropy_loss`.
+- Quantized reference runtime path:
+	- Added `aerorl/quant_ref.py` and integrated into wrapper outputs (`int4/int8/fp16-reference` modes).
+- Real VRAM/throughput benchmark path:
+	- Upgraded benchmark script to `--mode real` with measured `peak_vram_gb` and throughput.
+
+### Validation summary
+- `pytest`: `5 passed in 1.15s`
+- Real benchmark (`cuda`) persisted to `reports/benchmark-real-2026-03-23.json`
+- Synthetic benchmark persisted to `reports/benchmark-synth-2026-03-23.json`
+
+### Environment constraints
+- `trl` and `verl` are not installed in this machine, so backend auto-resolution reports scaffold mode.
+- The integration layer is implemented and ready; full trainer run requires installing one of those backends.

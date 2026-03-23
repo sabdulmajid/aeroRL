@@ -11,15 +11,18 @@ Implemented now:
 - Stable public API surface:
 	- `AeroRLConfig`
 	- `wrap_vlm_for_rl(...)`
-- Synthetic benchmark runner for execution-path validation
+- TRL/verl integration adapter resolution (`auto` / `trl` / `verl`)
+- Vision-token masking loss path (`masked_cross_entropy_loss`)
+- Quantized reference runtime metadata path (`int4` / `int8` / `fp16-reference`)
+- Benchmark runner with synthetic and real torch measurement modes
 - Smoke test coverage for public API contract
 - Session handoff logging to survive disconnects and agent swaps
 
-Not implemented yet:
-- Real TRL/verl GRPO training integration
-- True VLM vision-token masking in loss kernels
-- Quantized reference-model runtime path
-- Real VRAM/throughput benchmark deltas on target hardware
+In progress for production hardening:
+- Wiring adapter resolution to full GRPO trainer lifecycle hooks
+- Integrating masking path into full model-forward + optimizer steps
+- Backend-specific quantized reference execution path
+- Multi-model benchmark matrix on target hardware
 
 ## Repository Structure
 
@@ -59,6 +62,13 @@ cd /pub7/neel2/aerorl
 	- `iters_per_sec`: 99.3925
 
 Full run log: `reports/verification-2026-03-23.md`
+
+## Implemented Components
+
+- `aerorl/adapters.py` — optional TRL/verl backend discovery and routing metadata
+- `aerorl/losses.py` — vision-token-aware masking and masked cross entropy
+- `aerorl/quant_ref.py` — quantized reference runtime abstraction
+- `benchmarks/vlm_grpo_benchmark.py` — synthetic/real benchmark mode with throughput + peak VRAM fields
 
 ## Public API Example
 

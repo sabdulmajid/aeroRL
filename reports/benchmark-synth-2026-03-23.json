@@ -1,0 +1,27 @@
+{
+  "model": "Qwen/Qwen2.5-VL-7B-Instruct",
+  "steps": 20,
+  "mode": "synthetic",
+  "device": "synthetic",
+  "elapsed_sec": 0.2013,
+  "iters_per_sec": 99.3787,
+  "peak_vram_gb": 0.0,
+  "config": {
+    "zero_copy_kv": true,
+    "mask_vision_tokens": true,
+    "quant_ref_bits": 8,
+    "trainer_backend": "auto"
+  },
+  "model_runtime": "trainable",
+  "ref_runtime": "reference",
+  "trainer_backend": {
+    "backend": "none",
+    "available": false,
+    "reason": "neither trl nor verl is installed; running in scaffold mode"
+  },
+  "reference_quant": {
+    "precision": "int8",
+    "quantization_mode": "int8-ready"
+  },
+  "note": "Synthetic smoke benchmark path."
+}

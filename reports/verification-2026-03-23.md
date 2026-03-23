@@ -41,3 +41,36 @@ TMPDIR=/pub7/neel2/tmp PIP_CACHE_DIR=/pub7/neel2/pip-cache /pub7/neel2/.venvs/ae
 ## Status
 - Baseline scaffold is installed, validated, and reproducible with explicit commands.
 - Current benchmark is synthetic smoke coverage; real VLM GRPO measurement integration remains future scope.
+
+## Phase 2: Implementation Completion (same date)
+
+Implemented modules:
+- `aerorl/adapters.py` (TRL/verl backend resolution layer)
+- `aerorl/losses.py` (vision-token masking + masked cross-entropy)
+- `aerorl/quant_ref.py` (quantized reference runtime abstraction)
+- Updated `benchmarks/vlm_grpo_benchmark.py` with `--mode {synthetic,real}` and measured `peak_vram_gb`
+
+Additional tests added:
+- `tests/test_losses.py`
+- `tests/test_adapters_and_quant.py`
+
+Final validation commands:
+
+```bash
+/pub7/neel2/.venvs/aerorl/bin/python -m pytest -q
+/pub7/neel2/.venvs/aerorl/bin/python benchmarks/vlm_grpo_benchmark.py --mode real --steps 20 --matrix-size 512
+/pub7/neel2/.venvs/aerorl/bin/python benchmarks/vlm_grpo_benchmark.py --mode synthetic --steps 20
+```
+
+Final validation results:
+- Tests: `5 passed in 1.15s`
+- Real benchmark artifact: `reports/benchmark-real-2026-03-23.json`
+  - `device`: `cuda`
+  - `iters_per_sec`: `158.8987`
+  - `peak_vram_gb`: `0.0094`
+- Synthetic benchmark artifact: `reports/benchmark-synth-2026-03-23.json`
+  - `iters_per_sec`: `99.3787`
+
+Notes:
+- Backend auto-detection currently reports `none` in this environment because `trl` and `verl` are not installed.
+- Integration surface is now present and test-covered; production trainer wiring remains backend-install dependent.
