@@ -8,4 +8,4 @@ def test_public_api_smoke() -> None:
     assert model["aerorl"]["mask_vision_tokens"] is True
     assert "trainer" in model
     assert ref_model["precision"] == "int8"
-    assert ref_model["quantization_mode"] == "int8-ready"
+    assert ref_model["quantization_mode"].startswith("int8-")

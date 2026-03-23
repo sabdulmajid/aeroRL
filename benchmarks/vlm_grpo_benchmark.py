@@ -79,15 +79,49 @@ def run_benchmark(model_name: str, steps: int = 20, mode: str = "synthetic", mat
     }
 
 
+def run_benchmark_matrix(
+    model_names: list[str],
+    steps: int = 20,
+    mode: str = "real",
+    matrix_size: int = 1024,
+) -> dict:
+    runs = [run_benchmark(model_name=model, steps=steps, mode=mode, matrix_size=matrix_size) for model in model_names]
+    avg_throughput = sum(run["iters_per_sec"] for run in runs) / max(len(runs), 1)
+    max_peak_vram = max(run["peak_vram_gb"] for run in runs) if runs else 0.0
+    return {
+        "mode": mode,
+        "steps": steps,
+        "matrix_size": matrix_size,
+        "models": model_names,
+        "avg_iters_per_sec": round(avg_throughput, 4),
+        "max_peak_vram_gb": round(max_peak_vram, 4),
+        "runs": runs,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run AeroRL benchmark")
     parser.add_argument("--model", default="Qwen/Qwen2.5-VL-7B-Instruct")
     parser.add_argument("--steps", type=int, default=20)
     parser.add_argument("--mode", choices=["synthetic", "real"], default="synthetic")
     parser.add_argument("--matrix-size", type=int, default=1024)
+    parser.add_argument(
+        "--models",
+        default="",
+        help="Comma-separated model list for matrix benchmarking. If set, overrides --model.",
+    )
     args = parser.parse_args()
 
-    results = run_benchmark(args.model, steps=args.steps, mode=args.mode, matrix_size=args.matrix_size)
+    if args.models.strip():
+        model_list = [item.strip() for item in args.models.split(",") if item.strip()]
+        results = run_benchmark_matrix(
+            model_names=model_list,
+            steps=args.steps,
+            mode=args.mode,
+            matrix_size=args.matrix_size,
+        )
+    else:
+        results = run_benchmark(args.model, steps=args.steps, mode=args.mode, matrix_size=args.matrix_size)
     print(json.dumps(results, indent=2))
 
 

@@ -3,8 +3,8 @@
   "steps": 20,
   "mode": "real",
   "device": "cuda",
-  "elapsed_sec": 0.1259,
-  "iters_per_sec": 158.8987,
+  "elapsed_sec": 0.1365,
+  "iters_per_sec": 146.5458,
   "peak_vram_gb": 0.0094,
   "config": {
     "zero_copy_kv": true,
@@ -21,7 +21,7 @@
   },
   "reference_quant": {
     "precision": "int8",
-    "quantization_mode": "int8-ready"
+    "quantization_mode": "int8-torch"
   },
   "note": "Real torch benchmark path with measured throughput and peak memory."
 }

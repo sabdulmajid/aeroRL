@@ -14,6 +14,6 @@ def test_quantized_runtime_modes() -> None:
     ref4 = create_quantized_reference_runtime("demo/model", quant_bits=4)
     ref16 = create_quantized_reference_runtime("demo/model", quant_bits=16)
 
-    assert ref8.quantization_mode == "int8-ready"
-    assert ref4.quantization_mode == "int4-ready"
+    assert ref8.quantization_mode.startswith("int8-")
+    assert ref4.quantization_mode.startswith("int4-")
     assert ref16.quantization_mode == "fp16-reference"

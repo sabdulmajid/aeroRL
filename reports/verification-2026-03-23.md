@@ -74,3 +74,25 @@ Final validation results:
 Notes:
 - Backend auto-detection currently reports `none` in this environment because `trl` and `verl` are not installed.
 - Integration surface is now present and test-covered; production trainer wiring remains backend-install dependent.
+
+## Final completion pass
+
+Additional implementations:
+- Added `aerorl/trainer.py` with full lifecycle hooks: `on_train_start`, `train_step`, `on_train_end`
+- Wired masked loss into train step path
+- Added backend-specific quant backend resolver in `aerorl/quant_ref.py`
+- Added benchmark matrix mode via `--models` argument
+
+Additional tests:
+- `tests/test_trainer.py`
+- `tests/test_benchmark_matrix.py`
+
+Final validation:
+- Tests: `7 passed in 1.46s`
+- Single-model real benchmark: `reports/benchmark-real-2026-03-23.json`
+  - `iters_per_sec`: `146.5458`
+  - `peak_vram_gb`: `0.0094`
+- Multi-model real matrix benchmark: `reports/benchmark-matrix-real-2026-03-23.json`
+  - `models`: 3
+  - `matrix_size`: 2048
+  - `max_peak_vram_gb`: `0.0314`

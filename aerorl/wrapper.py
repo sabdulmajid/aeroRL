@@ -14,6 +14,7 @@ def wrap_vlm_for_rl(model_name_or_path: str, config: AeroRLConfig) -> Tuple[dict
     reference_runtime = create_quantized_reference_runtime(
         model_name_or_path=model_name_or_path,
         quant_bits=config.quant_ref_bits,
+        preferred_backend="auto",
     )
 
     model = {

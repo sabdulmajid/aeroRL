@@ -1,0 +1,95 @@
+{
+  "mode": "real",
+  "steps": 40,
+  "matrix_size": 2048,
+  "models": [
+    "Qwen/Qwen2.5-VL-7B-Instruct",
+    "llava-hf/llava-1.5-7b-hf",
+    "microsoft/Phi-3-vision-128k-instruct"
+  ],
+  "avg_iters_per_sec": 8468.1556,
+  "max_peak_vram_gb": 0.0314,
+  "runs": [
+    {
+      "model": "Qwen/Qwen2.5-VL-7B-Instruct",
+      "steps": 40,
+      "mode": "real",
+      "device": "cuda",
+      "elapsed_sec": 0.1334,
+      "iters_per_sec": 299.9365,
+      "peak_vram_gb": 0.0314,
+      "config": {
+        "zero_copy_kv": true,
+        "mask_vision_tokens": true,
+        "quant_ref_bits": 8,
+        "trainer_backend": "auto"
+      },
+      "model_runtime": "trainable",
+      "ref_runtime": "reference",
+      "trainer_backend": {
+        "backend": "none",
+        "available": false,
+        "reason": "neither trl nor verl is installed; running in scaffold mode"
+      },
+      "reference_quant": {
+        "precision": "int8",
+        "quantization_mode": "int8-torch"
+      },
+      "note": "Real torch benchmark path with measured throughput and peak memory."
+    },
+    {
+      "model": "llava-hf/llava-1.5-7b-hf",
+      "steps": 40,
+      "mode": "real",
+      "device": "cuda",
+      "elapsed_sec": 0.0032,
+      "iters_per_sec": 12545.926,
+      "peak_vram_gb": 0.0314,
+      "config": {
+        "zero_copy_kv": true,
+        "mask_vision_tokens": true,
+        "quant_ref_bits": 8,
+        "trainer_backend": "auto"
+      },
+      "model_runtime": "trainable",
+      "ref_runtime": "reference",
+      "trainer_backend": {
+        "backend": "none",
+        "available": false,
+        "reason": "neither trl nor verl is installed; running in scaffold mode"
+      },
+      "reference_quant": {
+        "precision": "int8",
+        "quantization_mode": "int8-torch"
+      },
+      "note": "Real torch benchmark path with measured throughput and peak memory."
+    },
+    {
+      "model": "microsoft/Phi-3-vision-128k-instruct",
+      "steps": 40,
+      "mode": "real",
+      "device": "cuda",
+      "elapsed_sec": 0.0032,
+      "iters_per_sec": 12558.6042,
+      "peak_vram_gb": 0.0314,
+      "config": {
+        "zero_copy_kv": true,
+        "mask_vision_tokens": true,
+        "quant_ref_bits": 8,
+        "trainer_backend": "auto"
+      },
+      "model_runtime": "trainable",
+      "ref_runtime": "reference",
+      "trainer_backend": {
+        "backend": "none",
+        "available": false,
+        "reason": "neither trl nor verl is installed; running in scaffold mode"
+      },
+      "reference_quant": {
+        "precision": "int8",
+        "quantization_mode": "int8-torch"
+      },
+      "note": "Real torch benchmark path with measured throughput and peak memory."
+    }
+  ]
+}

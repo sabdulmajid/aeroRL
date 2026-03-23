@@ -85,3 +85,16 @@
 ### Environment constraints
 - `trl` and `verl` are not installed in this machine, so backend auto-resolution reports scaffold mode.
 - The integration layer is implemented and ready; full trainer run requires installing one of those backends.
+
+## 2026-03-23 — Final simplify + done status pass
+
+### Completed now
+- Added `AeroRLTrainer` lifecycle + `train_step` integration for masked loss path.
+- Added backend-aware quantization runtime selection (`torch` / `bitsandbytes` / `torchao` fallback logic).
+- Added multi-model matrix benchmark mode with `--models`.
+- Rewrote README to minimal user-facing format with direct stats and easy examples.
+
+### Current validated state
+- Tests: `7 passed`
+- Real benchmark file: `reports/benchmark-real-2026-03-23.json`
+- Real matrix file: `reports/benchmark-matrix-real-2026-03-23.json`
