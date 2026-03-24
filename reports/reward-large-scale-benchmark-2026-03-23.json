@@ -1,0 +1,136 @@
+{
+  "dataset": {
+    "name": "DocVQA train + ChartQA train (cached local HF datasets)",
+    "total_records": 29299,
+    "sources": {
+      "docvqa_train_rows": 1000,
+      "chartqa_train_rows": 28299
+    },
+    "synthetic_response_protocol": "deterministic corruption patterns over real prompts/references",
+    "pattern_counts": {
+      "format_bad_contains": 4169,
+      "good_json_exact": 16927,
+      "grounding_hidden": 3621,
+      "verbose_slow": 1408,
+      "wrong_answer": 3174
+    }
+  },
+  "compute": {
+    "gpu_status_before_run": {
+      "available": true,
+      "gpus": [
+        {
+          "index": 0,
+          "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+          "memory_used_mib": 67,
+          "memory_total_mib": 97887,
+          "utilization_gpu_pct": 0
+        },
+        {
+          "index": 1,
+          "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+          "memory_used_mib": 18,
+          "memory_total_mib": 97887,
+          "utilization_gpu_pct": 0
+        }
+      ]
+    },
+    "execution_mode": "cpu",
+    "data_load_sec": 2.467,
+    "evaluation_sec": 0.557,
+    "records_per_sec": 52646.37
+  },
+  "manual_baseline": {
+    "method": "manual_contains_reference",
+    "pass_rate": 0.997747
+  },
+  "aerorl_stack": {
+    "pass_rate": 0.624083,
+    "average_reward": 0.578804,
+    "component_averages": {
+      "verifier": 0.497747,
+      "grounding": 0.536162,
+      "format": 0.743875,
+      "cost": 0.903888
+    },
+    "weights": {
+      "verifier": 0.45,
+      "grounding": 0.3,
+      "format": 0.2,
+      "cost": 0.05
+    }
+  },
+  "improvement": {
+    "manual_false_passes_caught_count": 10948,
+    "manual_false_pass_rate_among_manual_passes": 0.374508,
+    "quality_dimensions_checked": {
+      "manual": 1,
+      "aerorl": 4,
+      "multiplier": 4.0
+    },
+    "sample_false_pass_ids": [
+      "chartqa::0:10002",
+      "chartqa::0:10003",
+      "chartqa::0:10005",
+      "chartqa::0:10007",
+      "chartqa::0:10008",
+      "chartqa::0:10011",
+      "chartqa::0:10013",
+      "chartqa::0:10016",
+      "chartqa::0:1002",
+      "chartqa::0:10022"
+    ],
+    "worst_examples": [
+      {
+        "id": "chartqa::0:9450",
+        "total_reward": -0.275,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "chartqa::1:495",
+        "total_reward": -0.275,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "chartqa::1:8981",
+        "total_reward": -0.275,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "chartqa::2:1980",
+        "total_reward": -0.275,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "chartqa::2:2355",
+        "total_reward": -0.275,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      }
+    ]
+  }
+}

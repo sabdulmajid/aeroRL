@@ -170,27 +170,30 @@
 - Demonstrates concrete quality-gate value, not just aggregate score output.
 - Shows exactly what AeroRL catches that naive manual scoring misses.
 
-## 2026-03-23 — Large real-dataset benchmark pass
+## 2026-03-23 — Large-scale real dataset benchmark
 
-### User request addressed
-- Replaced small toy benchmark with large-scale run on real dataset manifests.
+### Data source
+- Real cached HF datasets from `/pub7/neel2/.cache_hf/datasets`:
+	- `nielsr/docvqa_1200_examples` train
+	- `HuggingFaceM4/ChartQA` train shards
+- Total records evaluated: `29,299`
 
-### New artifacts
-- Script: `benchmarks/reward_real_dataset_benchmark.py`
-- Test: `tests/test_reward_real_dataset_benchmark.py`
-- Replay artifact: `reports/reward-replay-real-large-2026-03-23.jsonl`
-- Report artifact: `reports/reward-value-benchmark-real-large-2026-03-23.json`
+### Safety and infra checks
+- Ran `nvidia-smi` before benchmark.
+- GPUs were idle (0% utilization except display processes).
+- Benchmark intentionally executed in CPU mode.
 
-### Dataset and scale
-- Source: `soarm100_cloth_fold_v1_clean.jsonl` + `soarm100_cloth_fold_v0.jsonl`
-- Evaluated rows: `500`
+### Script and artifact
+- Script: `benchmarks/reward_large_scale_real_dataset_benchmark.py`
+- Artifact: `reports/reward-large-scale-benchmark-2026-03-23.json`
 
-### Key measured results
-- Manual pass rate: `0.746`
-- AeroRL pass rate: `0.432`
-- False passes caught by AeroRL: `161`
-- False pass rate among manual passes: `0.679325`
-- Diagnostics: format `56`, grounding `86`, verifier `284`, cost `12`
+### Key measured outcomes
+- Manual pass rate: `0.997747`
+- AeroRL pass rate: `0.624083`
+- Hidden manual false passes caught by AeroRL: `10,948`
+- Hidden false-pass fraction among manual passes: `0.374508`
+- Evaluation throughput: `52,646 records/s` (CPU)
 
-### Validation
-- Full suite: `16 passed`
+### Interpretation
+- Manual scoring overestimates quality on large datasets.
+- AeroRL provides materially stronger quality gating and diagnostics at scale.

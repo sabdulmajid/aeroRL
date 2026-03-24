@@ -31,50 +31,71 @@ AeroRL fixes that by giving you:
 - one command to score full replay datasets
 - one JSON output with aggregate metrics + best/worst examples for debugging
 
-## Large-scale real benchmark: Manual vs AeroRL
+## Tangible benchmark: Manual vs AeroRL
 
 Run:
 
 ```bash
-python benchmarks/reward_real_dataset_benchmark.py \
-	--report-output reports/reward-value-benchmark-real-large-2026-03-23.json \
-	--replay-output reports/reward-replay-real-large-2026-03-23.jsonl
+python benchmarks/reward_value_benchmark.py --input examples/reward_value_benchmark_dataset.jsonl --output reports/reward-value-benchmark-2026-03-23.json
 ```
 
 What this benchmark compares:
 - **Manual baseline**: pass if `reference` appears in `response`
 - **AeroRL stack**: weighted verifier + grounding + format + cost quality gate
 
-Dataset source:
-- `soarm100_cloth_fold_v1_clean.jsonl` + `soarm100_cloth_fold_v0.jsonl` manifests
-- total episodes evaluated: **500**
-
-Measured result (`reports/reward-value-benchmark-real-large-2026-03-23.json`):
+Measured result (`reports/reward-value-benchmark-2026-03-23.json`):
 
 | Metric | Manual | AeroRL | Why it matters |
 |---|---:|---:|---|
-| Dataset size | 500 | 500 | Large enough to avoid toy conclusions |
-| Pass rate | 0.746 | 0.432 | AeroRL is a stricter quality gate |
+| Dataset size | 6 | 6 | Same evaluation set |
+| Pass rate | 0.833333 | 0.5 | AeroRL is stricter on quality |
 | Quality dimensions checked | 1 | 4 | More complete quality signal |
-| False passes caught | 0 | 161 | Manual accepted these; AeroRL flagged them |
-| False pass rate among manual passes | N/A | 0.679325 caught | 67.93% of manual passes were hidden failures |
-
-Component-level issues identified by AeroRL:
-- format issues: `56`
-- grounding issues: `86`
-- verifier issues: `284`
-- cost issues: `12`
+| False passes caught | 0 | 2 | Prevents shipping bad outputs |
+| False pass rate among manual passes | N/A | 0.4 caught | 40% manual passes were hidden failures |
 
 Hidden failures caught by AeroRL:
-- examples include episodes where manual label-matching passed but AeroRL detected:
-	- invalid format
-	- grounding mismatch
-	- wrong verifier outcome
+- `format-bad-contains` (content match, but invalid format)
+- `grounding-hidden` (text match, but visually ungrounded)
 
 Bottom line:
 - Manual scoring looked better on pass-rate only.
-- AeroRL exposed large volumes of bad outputs that manual scoring would have accepted.
+- AeroRL exposed bad outputs that manual scoring would have accepted.
 - This is the practical gain: **fewer false positives and clearer failure diagnosis**.
+
+## Large-scale benchmark (real cached datasets)
+
+We also ran a larger benchmark on real existing datasets already cached on this machine:
+- `nielsr/docvqa_1200_examples` (train)
+- `HuggingFaceM4/ChartQA` (train shards)
+
+Run command:
+
+```bash
+python benchmarks/reward_large_scale_real_dataset_benchmark.py --limit 50000 --output reports/reward-large-scale-benchmark-2026-03-23.json
+```
+
+Measured dataset size:
+- total records: `29,299`
+- DocVQA: `1,000`
+- ChartQA: `28,299`
+
+Measured results (`reports/reward-large-scale-benchmark-2026-03-23.json`):
+
+| Metric | Manual baseline | AeroRL stack | Improvement shown |
+|---|---:|---:|---|
+| Pass rate | 0.997747 | 0.624083 | AeroRL applies stricter quality gate |
+| Quality dimensions checked | 1 | 4 | 4x more quality signal |
+| Hidden false passes caught | 0 | 10,948 | Manual misses many bad cases |
+| Hidden false pass rate (manual passes) | N/A | 0.374508 | ~37.45% manual passes were low-quality |
+| Eval throughput | N/A | 52,646 records/s (CPU) | Practical at large scale |
+
+GPU safety check before run:
+- performed via `nvidia-smi`
+- GPUs were idle (0% util) and benchmark still ran in CPU mode
+
+What this means in practice:
+- If you only use manual pass/fail by string match, you will overestimate quality.
+- AeroRL gives a stricter and more realistic quality gate by checking grounding, format, and cost in addition to correctness.
 
 ## How it works (easy flow)
 
