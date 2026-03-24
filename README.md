@@ -31,6 +31,37 @@ AeroRL fixes that by giving you:
 - one command to score full replay datasets
 - one JSON output with aggregate metrics + best/worst examples for debugging
 
+## Tangible benchmark: Manual vs AeroRL
+
+Run:
+
+```bash
+python benchmarks/reward_value_benchmark.py --input examples/reward_value_benchmark_dataset.jsonl --output reports/reward-value-benchmark-2026-03-23.json
+```
+
+What this benchmark compares:
+- **Manual baseline**: pass if `reference` appears in `response`
+- **AeroRL stack**: weighted verifier + grounding + format + cost quality gate
+
+Measured result (`reports/reward-value-benchmark-2026-03-23.json`):
+
+| Metric | Manual | AeroRL | Why it matters |
+|---|---:|---:|---|
+| Dataset size | 6 | 6 | Same evaluation set |
+| Pass rate | 0.833333 | 0.5 | AeroRL is stricter on quality |
+| Quality dimensions checked | 1 | 4 | More complete quality signal |
+| False passes caught | 0 | 2 | Prevents shipping bad outputs |
+| False pass rate among manual passes | N/A | 0.4 caught | 40% manual passes were hidden failures |
+
+Hidden failures caught by AeroRL:
+- `format-bad-contains` (content match, but invalid format)
+- `grounding-hidden` (text match, but visually ungrounded)
+
+Bottom line:
+- Manual scoring looked better on pass-rate only.
+- AeroRL exposed bad outputs that manual scoring would have accepted.
+- This is the practical gain: **fewer false positives and clearer failure diagnosis**.
+
 ## How it works (easy flow)
 
 1. `wrap_vlm_for_rl(...)` prepares runtime metadata.

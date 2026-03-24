@@ -146,3 +146,26 @@
 
 ### Validation
 - Full suite: `14 passed`
+
+## 2026-03-23 — Tangible value benchmark added
+
+### What was added
+- New benchmark script:
+	- `benchmarks/reward_value_benchmark.py`
+- New benchmark dataset:
+	- `examples/reward_value_benchmark_dataset.jsonl`
+- New benchmark artifact:
+	- `reports/reward-value-benchmark-2026-03-23.json`
+- New unit test:
+	- `tests/test_reward_value_benchmark.py`
+
+### Key measured results
+- Manual pass rate: `0.833333`
+- AeroRL pass rate: `0.5`
+- AeroRL caught hidden manual false passes: `2`
+- False pass rate among manual passes: `0.4`
+- Observability dimensions: manual `1` vs AeroRL `4`
+
+### Why this is useful
+- Demonstrates concrete quality-gate value, not just aggregate score output.
+- Shows exactly what AeroRL catches that naive manual scoring misses.

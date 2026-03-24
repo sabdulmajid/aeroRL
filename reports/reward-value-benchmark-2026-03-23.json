@@ -1,0 +1,77 @@
+{
+  "dataset_size": 6,
+  "manual_baseline": {
+    "method": "manual_contains_reference",
+    "pass_rate": 0.833333
+  },
+  "aerorl_stack": {
+    "pass_rate": 0.5,
+    "average_reward": 0.423333,
+    "component_averages": {
+      "verifier": 0.333333,
+      "grounding": 0.333333,
+      "format": 0.7,
+      "cost": 0.666667
+    },
+    "weights": {
+      "verifier": 0.45,
+      "grounding": 0.3,
+      "format": 0.2,
+      "cost": 0.05
+    }
+  },
+  "diagnostics_found": {
+    "format_issues": 1,
+    "grounding_issues": 2,
+    "verifier_issues": 1,
+    "cost_issues": 1
+  },
+  "improvement": {
+    "pass_rate_delta": -0.333333,
+    "observability_gain": {
+      "manual_dimensions": 1,
+      "aerorl_dimensions": 4,
+      "multiplier": 4.0
+    },
+    "manual_false_passes_caught": [
+      "format-bad-contains",
+      "grounding-hidden"
+    ],
+    "quality_gate_gain": {
+      "false_pass_rate": 0.4,
+      "false_pass_count": 2
+    },
+    "top_failure_examples": [
+      {
+        "id": "format-bad-contains",
+        "total_reward": 0.415,
+        "components": {
+          "verifier": 0.5,
+          "grounding": 1.0,
+          "format": -0.8,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "grounding-hidden",
+        "total_reward": 0.175,
+        "components": {
+          "verifier": 0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "grounding-bad",
+        "total_reward": -0.275,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      }
+    ]
+  }
+}
