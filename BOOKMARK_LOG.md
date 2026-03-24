@@ -169,3 +169,28 @@
 ### Why this is useful
 - Demonstrates concrete quality-gate value, not just aggregate score output.
 - Shows exactly what AeroRL catches that naive manual scoring misses.
+
+## 2026-03-23 — Large real-dataset benchmark pass
+
+### User request addressed
+- Replaced small toy benchmark with large-scale run on real dataset manifests.
+
+### New artifacts
+- Script: `benchmarks/reward_real_dataset_benchmark.py`
+- Test: `tests/test_reward_real_dataset_benchmark.py`
+- Replay artifact: `reports/reward-replay-real-large-2026-03-23.jsonl`
+- Report artifact: `reports/reward-value-benchmark-real-large-2026-03-23.json`
+
+### Dataset and scale
+- Source: `soarm100_cloth_fold_v1_clean.jsonl` + `soarm100_cloth_fold_v0.jsonl`
+- Evaluated rows: `500`
+
+### Key measured results
+- Manual pass rate: `0.746`
+- AeroRL pass rate: `0.432`
+- False passes caught by AeroRL: `161`
+- False pass rate among manual passes: `0.679325`
+- Diagnostics: format `56`, grounding `86`, verifier `284`, cost `12`
+
+### Validation
+- Full suite: `16 passed`

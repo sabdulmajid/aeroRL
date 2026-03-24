@@ -31,35 +31,49 @@ AeroRL fixes that by giving you:
 - one command to score full replay datasets
 - one JSON output with aggregate metrics + best/worst examples for debugging
 
-## Tangible benchmark: Manual vs AeroRL
+## Large-scale real benchmark: Manual vs AeroRL
 
 Run:
 
 ```bash
-python benchmarks/reward_value_benchmark.py --input examples/reward_value_benchmark_dataset.jsonl --output reports/reward-value-benchmark-2026-03-23.json
+python benchmarks/reward_real_dataset_benchmark.py \
+	--report-output reports/reward-value-benchmark-real-large-2026-03-23.json \
+	--replay-output reports/reward-replay-real-large-2026-03-23.jsonl
 ```
 
 What this benchmark compares:
 - **Manual baseline**: pass if `reference` appears in `response`
 - **AeroRL stack**: weighted verifier + grounding + format + cost quality gate
 
-Measured result (`reports/reward-value-benchmark-2026-03-23.json`):
+Dataset source:
+- `soarm100_cloth_fold_v1_clean.jsonl` + `soarm100_cloth_fold_v0.jsonl` manifests
+- total episodes evaluated: **500**
+
+Measured result (`reports/reward-value-benchmark-real-large-2026-03-23.json`):
 
 | Metric | Manual | AeroRL | Why it matters |
 |---|---:|---:|---|
-| Dataset size | 6 | 6 | Same evaluation set |
-| Pass rate | 0.833333 | 0.5 | AeroRL is stricter on quality |
+| Dataset size | 500 | 500 | Large enough to avoid toy conclusions |
+| Pass rate | 0.746 | 0.432 | AeroRL is a stricter quality gate |
 | Quality dimensions checked | 1 | 4 | More complete quality signal |
-| False passes caught | 0 | 2 | Prevents shipping bad outputs |
-| False pass rate among manual passes | N/A | 0.4 caught | 40% manual passes were hidden failures |
+| False passes caught | 0 | 161 | Manual accepted these; AeroRL flagged them |
+| False pass rate among manual passes | N/A | 0.679325 caught | 67.93% of manual passes were hidden failures |
+
+Component-level issues identified by AeroRL:
+- format issues: `56`
+- grounding issues: `86`
+- verifier issues: `284`
+- cost issues: `12`
 
 Hidden failures caught by AeroRL:
-- `format-bad-contains` (content match, but invalid format)
-- `grounding-hidden` (text match, but visually ungrounded)
+- examples include episodes where manual label-matching passed but AeroRL detected:
+	- invalid format
+	- grounding mismatch
+	- wrong verifier outcome
 
 Bottom line:
 - Manual scoring looked better on pass-rate only.
-- AeroRL exposed bad outputs that manual scoring would have accepted.
+- AeroRL exposed large volumes of bad outputs that manual scoring would have accepted.
 - This is the practical gain: **fewer false positives and clearer failure diagnosis**.
 
 ## How it works (easy flow)

@@ -1,0 +1,102 @@
+{
+  "dataset_size": 500,
+  "manual_baseline": {
+    "method": "manual_contains_valid_label",
+    "pass_rate": 0.746
+  },
+  "aerorl_stack": {
+    "pass_rate": 0.432,
+    "average_reward": 0.370221,
+    "component_averages": {
+      "verifier": 0.148,
+      "grounding": 0.32,
+      "format": 0.7984,
+      "cost": 0.95882
+    },
+    "weights": {
+      "verifier": 0.45,
+      "grounding": 0.3,
+      "format": 0.2,
+      "cost": 0.05
+    }
+  },
+  "diagnostics_found": {
+    "format_issues": 56,
+    "grounding_issues": 86,
+    "verifier_issues": 284,
+    "cost_issues": 12
+  },
+  "improvement": {
+    "pass_rate_delta": -0.314,
+    "false_passes_caught": 161,
+    "false_pass_rate_among_manual_passes": 0.679325,
+    "false_pass_examples": [
+      "episode_000000",
+      "episode_000001",
+      "episode_000002",
+      "episode_000003",
+      "episode_000004",
+      "episode_000005",
+      "episode_000006",
+      "episode_000007",
+      "episode_000008",
+      "episode_000009"
+    ],
+    "quality_dimensions": {
+      "manual": 1,
+      "aerorl": 4
+    },
+    "top_failure_examples": [
+      {
+        "id": "episode_000110",
+        "total_reward": -0.635,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": -0.8,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "episode_000182",
+        "total_reward": -0.635,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": -0.8,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "episode_000200",
+        "total_reward": -0.635,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": -0.8,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "episode_000227",
+        "total_reward": -0.635,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": -0.8,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "episode_000000",
+        "total_reward": -0.63625,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": -0.8,
+          "cost": 0.9750000000000001
+        }
+      }
+    ]
+  }
+}
