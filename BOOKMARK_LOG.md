@@ -197,3 +197,66 @@
 ### Interpretation
 - Manual scoring overestimates quality on large datasets.
 - AeroRL provides materially stronger quality gating and diagnostics at scale.
+
+## 2026-03-24 — Real model-generated benchmark shipped
+
+### What was added
+- New benchmark script:
+	- `benchmarks/reward_model_generated_benchmark.py`
+- New focused tests:
+	- `tests/test_reward_model_generated_benchmark.py`
+
+### Implementation highlights
+- Loads real cached datasets from `/pub7/neel2/.cache_hf/datasets`:
+	- DocVQA train Arrow
+	- ChartQA train Arrow shards
+- Decodes real image bytes and runs image-conditioned generation with cached SmolVLM (`HuggingFaceTB/SmolVLM-256M-Instruct`).
+- Normalizes outputs into a JSON answer contract and scores with AeroRL reward stack.
+- Writes both replay-level JSONL and benchmark summary JSON artifacts.
+- Added local snapshot/cache resolution + forced HF cache env handling to avoid `/pub3` disk-full path.
+
+### GPU safety and execution notes
+- Checked GPU state before run via `nvidia-smi` (idle).
+- Ran benchmark on `cuda:0` using local cached model files only.
+
+### Artifact and measured result
+- Summary artifact:
+	- `reports/reward-model-generated-benchmark-2026-03-24.json`
+- Replay artifact:
+	- `reports/reward-model-generated-replay-2026-03-24.jsonl`
+- Run shape:
+	- `40` DocVQA + `60` ChartQA = `100` model-generated samples
+- Key outcomes:
+	- manual pass rate: `0.47`
+	- AeroRL pass rate: `0.3`
+	- hidden manual false passes caught by AeroRL: `17`
+	- hidden false-pass fraction among manual passes: `0.361702`
+	- generation throughput: `1.784` samples/sec (GPU)
+
+### Validation
+- New test file passes:
+	- `tests/test_reward_model_generated_benchmark.py`: `2 passed`
+
+## 2026-03-24 — Larger real-world model-generated run (800 samples)
+
+### Run shape
+- Script: `benchmarks/reward_model_generated_benchmark.py`
+- Model: `HuggingFaceTB/SmolVLM-256M-Instruct`
+- Device: `cuda:0`
+- Data: real cached DocVQA + ChartQA rows with image-conditioned generation
+- Limits: `300` DocVQA + `500` ChartQA = `800` total
+
+### Artifacts
+- `reports/reward-model-generated-benchmark-2026-03-24-large.json`
+- `reports/reward-model-generated-replay-2026-03-24-large.jsonl`
+
+### Key outcomes
+- manual pass rate: `0.47125`
+- AeroRL pass rate: `0.2875`
+- hidden manual false passes caught by AeroRL: `147`
+- hidden false-pass fraction among manual passes: `0.38992`
+- generation throughput: `1.462` samples/sec
+
+### Runtime/GPU note
+- Reported GPU status before run: near idle.
+- Reported GPU status after run: very high utilization/memory pressure (`~96-99%` util on two GPUs reported by `nvidia-smi` query snapshot in artifact).

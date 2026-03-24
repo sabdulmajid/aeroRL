@@ -1,0 +1,202 @@
+{
+  "dataset": {
+    "name": "DocVQA + ChartQA (real images, model-generated outputs)",
+    "total_records": 100,
+    "sources": {
+      "docvqa_rows": 40,
+      "chartqa_rows": 60
+    },
+    "prompt_style": "single-image QA with strict JSON answer key"
+  },
+  "generation": {
+    "model_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
+    "device": "cuda:0",
+    "max_new_tokens": 16,
+    "load_sec": 5.751,
+    "generate_sec": 56.049,
+    "samples_per_sec": 1.784,
+    "gpu_status_before": {
+      "available": true,
+      "gpus": [
+        {
+          "index": 0,
+          "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+          "memory_used_mib": 67,
+          "memory_total_mib": 97887,
+          "utilization_gpu_pct": 0
+        },
+        {
+          "index": 1,
+          "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+          "memory_used_mib": 18,
+          "memory_total_mib": 97887,
+          "utilization_gpu_pct": 0
+        }
+      ]
+    },
+    "gpu_status_after": {
+      "available": true,
+      "gpus": [
+        {
+          "index": 0,
+          "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+          "memory_used_mib": 1889,
+          "memory_total_mib": 97887,
+          "utilization_gpu_pct": 15
+        },
+        {
+          "index": 1,
+          "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+          "memory_used_mib": 21,
+          "memory_total_mib": 97887,
+          "utilization_gpu_pct": 0
+        }
+      ]
+    }
+  },
+  "manual_baseline": {
+    "method": "manual_contains_reference",
+    "pass_rate": 0.47
+  },
+  "aerorl_stack": {
+    "pass_rate": 0.3,
+    "average_reward": 0.1165,
+    "component_averages": {
+      "verifier": -0.03,
+      "grounding": -0.4,
+      "format": 1.0,
+      "cost": 1.0
+    },
+    "weights": {
+      "verifier": 0.45,
+      "grounding": 0.3,
+      "format": 0.2,
+      "cost": 0.05
+    }
+  },
+  "improvement": {
+    "manual_false_passes_caught_count": 17,
+    "manual_false_pass_rate_among_manual_passes": 0.361702,
+    "quality_dimensions_checked": {
+      "manual": 1,
+      "aerorl": 4,
+      "multiplier": 4.0
+    },
+    "sample_false_pass_ids": [
+      "chartqa::0:14",
+      "chartqa::0:15",
+      "chartqa::0:16",
+      "chartqa::0:17",
+      "chartqa::0:22",
+      "chartqa::0:25",
+      "chartqa::0:34",
+      "chartqa::0:36",
+      "chartqa::0:40",
+      "chartqa::0:42"
+    ],
+    "best_examples": [
+      {
+        "id": "docvqa::train_0",
+        "total_reward": 0.775,
+        "components": {
+          "verifier": 0.5,
+          "grounding": 1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "docvqa::train_3",
+        "total_reward": 0.775,
+        "components": {
+          "verifier": 0.5,
+          "grounding": 1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "docvqa::train_4",
+        "total_reward": 0.775,
+        "components": {
+          "verifier": 0.5,
+          "grounding": 1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "docvqa::train_5",
+        "total_reward": 0.775,
+        "components": {
+          "verifier": 0.5,
+          "grounding": 1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "docvqa::train_7",
+        "total_reward": 0.775,
+        "components": {
+          "verifier": 0.5,
+          "grounding": 1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      }
+    ],
+    "worst_examples": [
+      {
+        "id": "chartqa::0:55",
+        "total_reward": -0.275,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "chartqa::0:56",
+        "total_reward": -0.275,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "chartqa::0:57",
+        "total_reward": -0.275,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "chartqa::0:58",
+        "total_reward": -0.275,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      },
+      {
+        "id": "chartqa::0:59",
+        "total_reward": -0.275,
+        "components": {
+          "verifier": -0.5,
+          "grounding": -1.0,
+          "format": 1.0,
+          "cost": 1.0
+        }
+      }
+    ]
+  }
+}
