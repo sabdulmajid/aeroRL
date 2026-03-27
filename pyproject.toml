@@ -16,5 +16,27 @@ dependencies = [
   "torch>=2.2",
 ]
 
+[project.optional-dependencies]
+benchmark = [
+  "pillow>=10",
+  "pyarrow>=16",
+  "transformers>=4.40",
+]
+benchmark_standard = [
+  "accelerate>=1.13.0",
+  "datasets>=4.8.4",
+  "evaluate>=0.4.6",
+  "loguru>=0.7.3",
+  "tenacity>=9.1.4",
+  "pytablewriter>=1.2.1",
+  "jsonlines>=4.0.0",
+  "qwen-vl-utils>=0.0.14",
+  "decord>=0.6.0",
+  "sacrebleu>=2.6.0",
+]
+dev = [
+  "pytest>=8",
+]
+
 [tool.setuptools]
 packages = ["aerorl"]

@@ -1,0 +1,131 @@
+{
+  "suite": {
+    "name": "public_vqa_lite",
+    "tasks": [
+      "aerorl_public_vqa_lite"
+    ]
+  },
+  "generation": {
+    "model_backend": "qwen2_vl",
+    "pretrained": "Qwen/Qwen2-VL-2B-Instruct",
+    "device": "cuda:0",
+    "batch_size": 1,
+    "elapsed_sec": 235.42,
+    "samples_per_sec": 4.248,
+    "gpu_status_before": {
+      "available": true,
+      "gpus": [
+        {
+          "index": 0,
+          "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+          "memory_used_mib": 67,
+          "memory_total_mib": 97887,
+          "utilization_gpu_pct": 0,
+          "power_draw_w": 20.34
+        },
+        {
+          "index": 1,
+          "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+          "memory_used_mib": 18,
+          "memory_total_mib": 97887,
+          "utilization_gpu_pct": 0,
+          "power_draw_w": 18.24
+        }
+      ]
+    },
+    "gpu_status_after": {
+      "available": true,
+      "gpus": [
+        {
+          "index": 0,
+          "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+          "memory_used_mib": 67,
+          "memory_total_mib": 97887,
+          "utilization_gpu_pct": 0,
+          "power_draw_w": 19.21
+        },
+        {
+          "index": 1,
+          "name": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+          "memory_used_mib": 18,
+          "memory_total_mib": 97887,
+          "utilization_gpu_pct": 0,
+          "power_draw_w": 99.48
+        }
+      ]
+    },
+    "gpu_profile": {
+      "physical_gpu_index": 1,
+      "sample_count": 405,
+      "avg_memory_used_mib": 4769.815,
+      "max_memory_used_mib": 5230.0,
+      "avg_utilization_gpu_pct": 27.249,
+      "max_utilization_gpu_pct": 61.0,
+      "avg_power_draw_w": 157.478,
+      "max_power_draw_w": 213.42
+    }
+  },
+  "results": {
+    "total_samples": 1000,
+    "mean_primary_score": 0.755286,
+    "tasks": [
+      {
+        "task": "aerorl_chartqa_lite",
+        "samples": 500,
+        "metrics": {
+          "relaxed_overall,none": 0.65,
+          "relaxed_human_split,none": 0.5783132530120482,
+          "relaxed_augmented_split,none": 0.7916666666666666
+        },
+        "primary_metric": "relaxed_overall,none",
+        "primary_score": 0.65
+      },
+      {
+        "task": "aerorl_docvqa_val_lite",
+        "samples": 500,
+        "metrics": {
+          "anls,none": 0.8605718526140336
+        },
+        "primary_metric": "anls,none",
+        "primary_score": 0.860572
+      }
+    ]
+  },
+  "artifacts": {
+    "aggregated_results_json": "/pub7/neel2/aerorl/reports/lmms-eval-standard-raw-2026-03-27/Qwen__Qwen2-VL-2B-Instruct/20260327_152804_results.json",
+    "sample_logs": [
+      "/pub7/neel2/aerorl/reports/lmms-eval-standard-raw-2026-03-27/Qwen__Qwen2-VL-2B-Instruct/20260327_152804_samples_aerorl_chartqa_lite.jsonl",
+      "/pub7/neel2/aerorl/reports/lmms-eval-standard-raw-2026-03-27/Qwen__Qwen2-VL-2B-Instruct/20260327_152804_samples_aerorl_docvqa_val_lite.jsonl"
+    ],
+    "raw_output_dir": "/pub7/neel2/aerorl/reports/lmms-eval-standard-raw-2026-03-27",
+    "runner_log": "/pub7/neel2/aerorl/reports/lmms-eval-standard-2026-03-27.log"
+  },
+  "command": {
+    "argv": [
+      "python",
+      "-m",
+      "lmms_eval",
+      "eval",
+      "--model",
+      "qwen2_vl",
+      "--model_args",
+      "pretrained=Qwen/Qwen2-VL-2B-Instruct",
+      "--tasks",
+      "aerorl_public_vqa_lite",
+      "--include_path",
+      "/pub7/neel2/aerorl/benchmarks/lmms_tasks",
+      "--device",
+      "cuda:0",
+      "--batch_size",
+      "1",
+      "--output_path",
+      "/pub7/neel2/aerorl/reports/lmms-eval-standard-raw-2026-03-27",
+      "--log_samples",
+      "--verbosity",
+      "WARNING",
+      "--process_with_media",
+      "--force_simple"
+    ],
+    "shell": "python -m lmms_eval eval --model qwen2_vl --model_args pretrained=Qwen/Qwen2-VL-2B-Instruct --tasks aerorl_public_vqa_lite --include_path /pub7/neel2/aerorl/benchmarks/lmms_tasks --device cuda:0 --batch_size 1 --output_path /pub7/neel2/aerorl/reports/lmms-eval-standard-raw-2026-03-27 --log_samples --verbosity WARNING --process_with_media --force_simple"
+  }
+}

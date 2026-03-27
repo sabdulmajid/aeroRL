@@ -1,0 +1,311 @@
+{
+  "results": {
+    "aerorl_public_vqa_lite": {
+      " ": " ",
+      "alias": "aerorl_public_vqa_lite"
+    },
+    "aerorl_chartqa_lite": {
+      "alias": " - aerorl_chartqa_lite",
+      "relaxed_overall,none": 0.65,
+      "relaxed_overall_stderr,none": 0.021352091786223066,
+      "relaxed_overall_stderr_clt,none": 0.021352091786223066,
+      "relaxed_overall_stderr_clustered,none": "N/A",
+      "relaxed_human_split,none": 0.5783132530120482,
+      "relaxed_human_split_stderr,none": 0.027143294053829602,
+      "relaxed_human_split_stderr_clt,none": 0.0271432940538296,
+      "relaxed_human_split_stderr_clustered,none": "N/A",
+      "relaxed_augmented_split,none": 0.7916666666666666,
+      "relaxed_augmented_split_stderr,none": 0.03142623294477299,
+      "relaxed_augmented_split_stderr_clt,none": 0.03142623294477298,
+      "relaxed_augmented_split_stderr_clustered,none": "N/A"
+    },
+    "aerorl_docvqa_val_lite": {
+      "alias": " - aerorl_docvqa_val_lite",
+      "anls,none": 0.8605718526140336,
+      "anls_stderr,none": 0.014551507656281774,
+      "anls_stderr_clt,none": 0.01455150765628177,
+      "anls_stderr_clustered,none": "N/A"
+    }
+  },
+  "group_subtasks": {
+    "aerorl_public_vqa_lite": [
+      "aerorl_docvqa_val_lite",
+      "aerorl_chartqa_lite"
+    ]
+  },
+  "configs": {
+    "aerorl_chartqa_lite": {
+      "task": "aerorl_chartqa_lite",
+      "dataset_path": "lmms-lab/LMMs-Eval-Lite",
+      "dataset_name": "chartqa",
+      "dataset_kwargs": {
+        "token": false
+      },
+      "test_split": "lite",
+      "full_docs": false,
+      "process_results_use_image": false,
+      "doc_to_visual": "<function chartqa_doc_to_visual at 0x7d8766d68360>",
+      "doc_to_text": "<function chartqa_doc_to_text at 0x7d8766d6ade0>",
+      "doc_to_target": "answer",
+      "process_results": "<function chartqa_process_results at 0x7d8766d6ae80>",
+      "description": "",
+      "target_delimiter": " ",
+      "fewshot_delimiter": "\n\n",
+      "num_fewshot": 0,
+      "metric_list": [
+        {
+          "metric": "relaxed_overall",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "relaxed_human_split",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "relaxed_augmented_split",
+          "aggregation": "mean",
+          "higher_is_better": true
+        }
+      ],
+      "output_type": "generate_until",
+      "generation_kwargs": {
+        "max_new_tokens": 16,
+        "temperature": 0.0,
+        "do_sample": false,
+        "until": [
+          "\n\n"
+        ]
+      },
+      "repeats": 1,
+      "should_decontaminate": false,
+      "score_key": "score",
+      "metadata": {
+        "version": 0.0
+      },
+      "lmms_eval_specific_kwargs": {
+        "default": {
+          "pre_prompt": "",
+          "post_prompt": "\nAnswer the question with a single word."
+        },
+        "qwen_vl": {
+          "pre_prompt": "",
+          "post_prompt": " Answer:"
+        },
+        "pre_prompt": "",
+        "post_prompt": "\nAnswer the question with a single word."
+      }
+    },
+    "aerorl_docvqa_val_lite": {
+      "task": "aerorl_docvqa_val_lite",
+      "dataset_path": "lmms-lab/LMMs-Eval-Lite",
+      "dataset_name": "docvqa_val",
+      "dataset_kwargs": {
+        "token": false
+      },
+      "test_split": "lite",
+      "full_docs": false,
+      "process_results_use_image": false,
+      "doc_to_visual": "<function docvqa_doc_to_visual at 0x7d8766d69ee0>",
+      "doc_to_text": "<function docvqa_doc_to_text at 0x7d8766d6b060>",
+      "doc_to_target": "answers",
+      "description": "",
+      "target_delimiter": " ",
+      "fewshot_delimiter": "\n\n",
+      "num_fewshot": 0,
+      "metric_list": [
+        {
+          "metric": "anls",
+          "aggregation": "mean",
+          "higher_is_better": true
+        }
+      ],
+      "output_type": "generate_until",
+      "generation_kwargs": {
+        "max_new_tokens": 32,
+        "temperature": 0.0,
+        "do_sample": false,
+        "until": [
+          "\n\n"
+        ]
+      },
+      "repeats": 1,
+      "should_decontaminate": false,
+      "score_key": "score",
+      "metadata": {
+        "version": 0.0
+      },
+      "lmms_eval_specific_kwargs": {
+        "default": {
+          "pre_prompt": "",
+          "post_prompt": "\nAnswer the question using a single word or phrase."
+        },
+        "qwen_vl": {
+          "pre_prompt": "",
+          "post_prompt": " Answer:"
+        },
+        "pre_prompt": "",
+        "post_prompt": "\nAnswer the question using a single word or phrase."
+      }
+    }
+  },
+  "versions": {
+    "aerorl_chartqa_lite": 0.0,
+    "aerorl_docvqa_val_lite": 0.0
+  },
+  "n-shot": {
+    "aerorl_chartqa_lite": 0,
+    "aerorl_docvqa_val_lite": 0
+  },
+  "higher_is_better": {
+    "aerorl_chartqa_lite": {
+      "relaxed_overall": true,
+      "relaxed_human_split": true,
+      "relaxed_augmented_split": true
+    },
+    "aerorl_docvqa_val_lite": {
+      "anls": true
+    },
+    "aerorl_public_vqa_lite": {
+      "anls": true,
+      "relaxed_overall": true,
+      "relaxed_human_split": true,
+      "relaxed_augmented_split": true
+    }
+  },
+  "n-samples": {
+    "aerorl_docvqa_val_lite": {
+      "original": 500,
+      "effective": 500
+    },
+    "aerorl_chartqa_lite": {
+      "original": 500,
+      "effective": 500
+    }
+  },
+  "config": {
+    "model": "qwen2_vl",
+    "model_args": "pretrained=Qwen/Qwen2-VL-2B-Instruct",
+    "batch_size": "1",
+    "batch_sizes": [],
+    "device": "cuda:0",
+    "use_cache": null,
+    "limit": null,
+    "offset": 0,
+    "bootstrap_iters": 100000,
+    "gen_kwargs": "",
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234,
+    "resolved_cli_args": {
+      "config": "",
+      "model": "qwen2_vl",
+      "tasks": "aerorl_public_vqa_lite",
+      "model_args": "pretrained=Qwen/Qwen2-VL-2B-Instruct",
+      "launcher_args": null,
+      "num_fewshot": null,
+      "batch_size": "1",
+      "max_batch_size": null,
+      "device": "cuda:0",
+      "output_path": "/pub7/neel2/aerorl/reports/lmms-eval-standard-raw-2026-03-27",
+      "limit": null,
+      "offset": 0,
+      "use_cache": null,
+      "cache_requests": null,
+      "check_integrity": false,
+      "write_out": false,
+      "log_samples": true,
+      "wandb_log_samples": false,
+      "log_samples_suffix": "model_outputs",
+      "system_instruction": null,
+      "apply_chat_template": false,
+      "fewshot_as_multiturn": false,
+      "show_config": false,
+      "include_path": "/pub7/neel2/aerorl/benchmarks/lmms_tasks",
+      "gen_kwargs": "",
+      "reasoning_tags": "[[\"<think>\", \"</think>\"], [\"<analysis>\", \"</analysis>\"]]",
+      "verbosity": "WARNING",
+      "wandb_args": "",
+      "timezone": "Asia/Singapore",
+      "hf_hub_log_args": ",output_path=/pub7/neel2/aerorl/reports/lmms-eval-standard-raw-2026-03-27",
+      "predict_only": false,
+      "seed": [
+        0,
+        1234,
+        1234,
+        1234
+      ],
+      "trust_remote_code": false,
+      "process_with_media": true,
+      "agentic_trace_mode": "basic",
+      "force_simple": true,
+      "tui": false,
+      "repeats": 1,
+      "baseline": null,
+      "max_tokens": null,
+      "power_analysis": false,
+      "effect_size": 0.03,
+      "alpha": 0.05,
+      "power": 0.8,
+      "correlation": 0.5,
+      "std_a": null,
+      "std_b": null
+    }
+  },
+  "git_hash": "c282da1",
+  "git_branch": "main",
+  "lmms_eval_version": "main@c282da1",
+  "date": "20260327_152804",
+  "usage": {},
+  "efficiency": {
+    "by_task": {
+      "aerorl_docvqa_val_lite": {
+        "docs": 500.0,
+        "docs_with_token_counts": 0.0,
+        "total_input_tokens": 0.0,
+        "total_output_tokens": 0.0,
+        "total_tokens": 0.0,
+        "total_correct_score": 0.0,
+        "avg_output_tokens_per_sample": 0.0,
+        "tokens_per_correct_answer": null
+      },
+      "aerorl_chartqa_lite": {
+        "docs": 500.0,
+        "docs_with_token_counts": 0.0,
+        "total_input_tokens": 0.0,
+        "total_output_tokens": 0.0,
+        "total_tokens": 0.0,
+        "total_correct_score": 0.0,
+        "avg_output_tokens_per_sample": 0.0,
+        "tokens_per_correct_answer": null
+      }
+    },
+    "overall": {
+      "docs": 1000.0,
+      "docs_with_token_counts": 0.0,
+      "total_input_tokens": 0.0,
+      "total_output_tokens": 0.0,
+      "total_tokens": 0.0,
+      "total_correct_score": 0.0,
+      "avg_output_tokens_per_sample": 0.0,
+      "tokens_per_correct_answer": null
+    }
+  },
+  "task_hashes": {
+    "aerorl_docvqa_val_lite": "df32d223209bc9a354c30845254ada0687c9042366aca1d5a155008f074012e0",
+    "aerorl_chartqa_lite": "df32d223209bc9a354c30845254ada0687c9042366aca1d5a155008f074012e0"
+  },
+  "model_source": "qwen2_vl",
+  "model_name": "Qwen/Qwen2-VL-2B-Instruct",
+  "model_name_sanitized": "Qwen__Qwen2-VL-2B-Instruct",
+  "system_instruction": null,
+  "system_instruction_sha": null,
+  "fewshot_as_multiturn": false,
+  "chat_template": null,
+  "chat_template_sha": null,
+  "start_time": 19568382.7551376,
+  "end_time": 19568607.90966152,
+  "total_evaluation_time_seconds": "225.15452392026782"
+}

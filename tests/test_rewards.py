@@ -107,3 +107,37 @@ def test_individual_rewards() -> None:
 
     assert verifier(context).score == 1.0
     assert grounding(context).score == 1.0
+
+
+def test_verifier_accepts_multiple_references() -> None:
+    verifier = VerifierReward()
+    context = RewardContext(
+        prompt="p",
+        response="april 15, 2014",
+        reference=["april 15,2014", "april 15, 2014"],
+        metadata={},
+    )
+
+    scored = verifier(context)
+
+    assert scored.score == 1.0
+    assert scored.details["matched_reference"] == "april 15, 2014"
+    assert scored.details["reference_count"] == 2
+
+
+def test_grounding_normalizes_common_surface_form_variants() -> None:
+    grounding = GroundingReward()
+    cases = [
+        ("42", "42%"),
+        ("Mr. Alm", "Mr. Alm."),
+        ("next 2-3 weeks", "within the next 2-3 weeks"),
+    ]
+
+    for evidence, claimed in cases:
+        context = RewardContext(
+            prompt="p",
+            response=claimed,
+            reference=None,
+            metadata={"evidence_entities": [evidence], "claimed_entities": [claimed]},
+        )
+        assert grounding(context).score == 1.0

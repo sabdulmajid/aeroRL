@@ -5,12 +5,26 @@ import re
 from dataclasses import dataclass, field
 from typing import Any, Iterable, Protocol
 
+_ENTITY_STOPWORDS = {
+    "a",
+    "an",
+    "the",
+    "within",
+    "about",
+    "around",
+    "approximately",
+    "roughly",
+    "nearly",
+    "just",
+    "only",
+}
+
 
 @dataclass(slots=True)
 class RewardContext:
     prompt: str
     response: str
-    reference: str | None = None
+    reference: str | list[str] | tuple[str, ...] | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
@@ -36,6 +50,66 @@ def _safe_token_count(text: str) -> int:
 
 def _clip_score(value: float, lo: float = -1.0, hi: float = 1.0) -> float:
     return max(lo, min(hi, value))
+
+
+def _normalize_whitespace(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _tokenize_entity(text: str) -> list[str]:
+    return re.findall(r"[-+]?\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)*%?|[a-z]+(?:[-'][a-z]+)*", text.lower())
+
+
+def _format_number(value: float) -> str:
+    return format(value, "g")
+
+
+def _numeric_aliases(token: str) -> set[str]:
+    match = re.fullmatch(r"([-+]?\d+(?:\.\d+)?(?:-\d+(?:\.\d+)?)*)%?", token)
+    if match is None or "-" in match.group(1):
+        return set()
+
+    numeric_part = match.group(1)
+    value = float(numeric_part)
+    aliases = {_format_number(value)}
+
+    if token.endswith("%"):
+        aliases.add(f"{_format_number(value)}%")
+        aliases.add(_format_number(value / 100.0))
+
+    return aliases
+
+
+def _entity_aliases(value: Any) -> set[str]:
+    text = _normalize_whitespace(str(value).strip().lower())
+    if not text:
+        return set()
+
+    aliases = {text.rstrip(".,;:!?")}
+    tokens = _tokenize_entity(text)
+    if not tokens:
+        return aliases
+
+    token_text = " ".join(tokens)
+    aliases.add(token_text)
+
+    core_tokens = [token for token in tokens if token not in _ENTITY_STOPWORDS]
+    if core_tokens:
+        aliases.add(" ".join(core_tokens))
+
+    for token in tokens:
+        aliases.update(_numeric_aliases(token))
+
+    return {alias for alias in aliases if alias}
+
+
+def _reference_candidates(reference: Any) -> list[str]:
+    if reference is None:
+        return []
+    if isinstance(reference, (list, tuple, set)):
+        return [str(item).strip() for item in reference if str(item).strip()]
+    text = str(reference).strip()
+    return [text] if text else []
 
 
 @dataclass(slots=True)
@@ -71,22 +145,40 @@ class VerifierReward:
     name: str = "verifier"
 
     def __call__(self, context: RewardContext) -> RewardResult:
-        if context.reference is None:
+        references = _reference_candidates(context.reference)
+        if not references:
             return RewardResult(name=self.name, score=0.0, details={"reason": "missing_reference"})
 
         response = context.response.strip()
-        reference = context.reference.strip()
         if not self.case_sensitive:
             response = response.lower()
-            reference = reference.lower()
 
-        exact = response == reference
-        contains = reference in response if reference else False
+        exact = False
+        contains = False
+        matched_reference = ""
+        for reference in references:
+            candidate = reference if self.case_sensitive else reference.lower()
+            candidate_exact = response == candidate
+            candidate_contains = candidate in response if candidate else False
+            if candidate_exact:
+                exact = True
+                contains = True
+                matched_reference = reference
+                break
+            if candidate_contains and not contains:
+                contains = True
+                matched_reference = reference
+
         score = 1.0 if exact else (0.5 if contains else -0.5)
         return RewardResult(
             name=self.name,
             score=score,
-            details={"exact_match": exact, "contains_reference": contains},
+            details={
+                "exact_match": exact,
+                "contains_reference": contains,
+                "matched_reference": matched_reference,
+                "reference_count": len(references),
+            },
         )
 
 
@@ -98,19 +190,30 @@ class GroundingReward:
         evidence_entities = context.metadata.get("evidence_entities", [])
         claimed_entities = context.metadata.get("claimed_entities", [])
 
-        evidence_set = {str(item).strip().lower() for item in evidence_entities if str(item).strip()}
-        claimed_set = {str(item).strip().lower() for item in claimed_entities if str(item).strip()}
+        evidence_aliases = [_entity_aliases(item) for item in evidence_entities if str(item).strip()]
+        claimed_aliases = [_entity_aliases(item) for item in claimed_entities if str(item).strip()]
+        evidence_aliases = [aliases for aliases in evidence_aliases if aliases]
+        claimed_aliases = [aliases for aliases in claimed_aliases if aliases]
 
-        if not claimed_set:
+        if not claimed_aliases:
             return RewardResult(name=self.name, score=0.0, details={"reason": "no_claimed_entities"})
 
-        overlap = len(evidence_set.intersection(claimed_set))
-        precision = overlap / max(len(claimed_set), 1)
+        overlap = 0
+        for claimed in claimed_aliases:
+            if any(claimed.intersection(evidence) for evidence in evidence_aliases):
+                overlap += 1
+
+        precision = overlap / max(len(claimed_aliases), 1)
         score = _clip_score(2.0 * precision - 1.0)
         return RewardResult(
             name=self.name,
             score=score,
-            details={"claimed": len(claimed_set), "overlap": overlap, "precision": round(precision, 4)},
+            details={
+                "claimed": len(claimed_aliases),
+                "evidence": len(evidence_aliases),
+                "overlap": overlap,
+                "precision": round(precision, 4),
+            },
         )
 
 

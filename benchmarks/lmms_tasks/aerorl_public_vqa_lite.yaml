@@ -1,0 +1,7 @@
+group: aerorl_public_vqa_lite
+task:
+  - aerorl_docvqa_val_lite
+  - aerorl_chartqa_lite
+metadata:
+  version: 0.0
+  description: Public-access lmms-eval lite suite used by AeroRL README benchmarking.
